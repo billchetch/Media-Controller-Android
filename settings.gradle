@@ -6,6 +6,8 @@ include ':appframework'
 project(':appframework').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/AppFrameworkLib/appframework')
 include ':webservices'
 project(':webservices').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/WebservicesTest/webservices')
+include ':messaging'
+project(':messaging').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/ChetchMessagingTest/messaging')
 
 include ':app'
 rootProject.name = "Media Controller"
