@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -102,11 +103,11 @@ public class MainActivity extends GenericActivity {
 
 
     public void onClickMediaPlayerButton(View view){
-        Button btn = (Button)view;
+        ImageButton btn = (ImageButton)view;
 
         if(SLog.LOG)SLog.e(LOG_TAG, "Media player button clicked " + btn.getTag());
 
-        mediaModel.sendPlayerCommand(MediaControllerMessageSchema.COMMAND_HELP);
+        //mediaModel.sendPlayerCommand(MediaControllerMessageSchema.COMMAND_HELP);
     }
 
     public void openSoundManager(View view) {
