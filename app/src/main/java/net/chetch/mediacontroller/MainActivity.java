@@ -3,12 +3,14 @@ package net.chetch.mediacontroller;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import net.chetch.appframework.GenericActivity;
+import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
 import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.messaging.ClientConnection;
 import net.chetch.utilities.SLog;
@@ -37,7 +39,7 @@ public class MainActivity extends GenericActivity {
         } else if(obj instanceof ConnectManager){
             ConnectManager cm = (ConnectManager)obj;
             //ConstraintLayout mainLayout = findViewById(R.id.erMainLayout);
-            //View progressCtn = findViewById(R.id.erProgressCtn);
+            View progressCtn = findViewById(R.id.progressCtn);
             switch(cm.getState()){
                 case CONNECT_REQUEST:
                     if(cm.fromError()){
@@ -50,23 +52,25 @@ public class MainActivity extends GenericActivity {
                         setProgressInfo("Connecting...");
                     }
                     //mainLayout.setVisibility(View.INVISIBLE);
-                    //progressCtn.setVisibility(View.VISIBLE);
+                    progressCtn.setVisibility(View.VISIBLE);
                     break;
 
                 case RECONNECT_REQUEST:
                     setProgressInfo("Disconnected!... Attempting to reconnect...");
                     //mainLayout.setVisibility(View.INVISIBLE);
-                    //progressCtn.setVisibility(View.VISIBLE);
+                    progressCtn.setVisibility(View.VISIBLE);
                     break;
 
                 case CONNECTED:
                     //mainLayout.setVisibility(View.VISIBLE);
-                    //progressCtn.setVisibility(View.INVISIBLE);
+                    progressCtn.setVisibility(View.INVISIBLE);
                     onClientConnected();
                     break;
             }
         }
     };
+
+    SoundManagerDialogFragment soundManagerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +79,17 @@ public class MainActivity extends GenericActivity {
 
         if(SLog.LOG)SLog.i(LOG_TAG, "Create Main activity");
 
-        //configure models
-        mediaModel = new ViewModelProvider(this).get(MediaControllerModel.class);
-        mediaModel.getError().observe(this, throwable  -> {
-           showError(throwable);
-        });
-
         //connect
         try{
+            //configure models
+            mediaModel = new ViewModelProvider(this).get(MediaControllerModel.class);
+            mediaModel.setClientName(MediaControllerModel.CLIENT_NAME);
+            mediaModel.getError().observe(this, throwable  -> {
+                showError(throwable);
+            });
+
             connectManager.addModel(mediaModel);
-            connectManager.requestConnect(connectProgress);
+            //connectManager.requestConnect(connectProgress);
         } catch (Exception e){
             showError(e);
             if(SLog.LOG)SLog.e(LOG_TAG, e.getMessage());
@@ -93,5 +98,23 @@ public class MainActivity extends GenericActivity {
 
     private void onClientConnected(){
         if(SLog.LOG)SLog.e(LOG_TAG, "Client connected");
+    }
+
+
+    public void onClickMediaPlayerButton(View view){
+        Button btn = (Button)view;
+
+        if(SLog.LOG)SLog.e(LOG_TAG, "Media player button clicked " + btn.getTag());
+
+        mediaModel.sendPlayerCommand(MediaControllerMessageSchema.COMMAND_HELP);
+    }
+
+    public void openSoundManager(View view) {
+        if (soundManagerDialog != null) {
+            soundManagerDialog.dismiss();
+        }
+        soundManagerDialog = new SoundManagerDialogFragment();
+
+        soundManagerDialog.show(getSupportFragmentManager(), "SoundManagerDialog");
     }
 }
