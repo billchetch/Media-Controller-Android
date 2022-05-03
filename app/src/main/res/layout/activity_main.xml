@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="openSoundManager"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -53,37 +52,27 @@
         app:layout_constraintTop_toBottomOf="@+id/actionbar">
 
         <ImageButton
-            android:id="@+id/powerButton"
+            android:id="@+id/soundManagerButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:onClick="onClickPowerOn"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_round_power_settings_new_24" />
-
-        <ImageButton
-            android:id="@+id/imageButton144"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:background="@drawable/sm_button_background"
             android:onClick="openSoundManager"
+            android:tag="SOUND_MANAGER"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_info_white_24dp" />
+            app:srcCompat="@drawable/ic_round_surround_sound_64" />
 
         <TableLayout
             android:id="@+id/tableLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageButton144"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/soundManagerButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/powerButton">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -95,37 +84,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#333333"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
-                    android:tag="BACK"
-                    app:srcCompat="@drawable/ic_chevron_left_white_18dp" />
+                    android:scaleType="center"
+                    android:tag="ESC"
+                    app:srcCompat="@drawable/ic_round_reply_64" />
 
                 <ImageButton
                     android:id="@+id/upButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
+                    android:cropToPadding="false"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="UP"
-                    app:srcCompat="@drawable/ic_round_expand_less_24px" />
+                    app:srcCompat="@drawable/ic_round_keyboard_arrow_up_64" />
 
                 <ImageButton
-                    android:id="@+id/imageButton2"
+                    android:id="@+id/playButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_chevron_left_white_18dp" />
+                    android:scaleType="center"
+                    android:tag="P"
+                    app:srcCompat="@drawable/ic_round_play_arrow_64" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <ImageButton
@@ -133,23 +125,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#000000"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="LEFT"
-                    app:srcCompat="@drawable/ic_chevron_left_white_18dp" />
+                    app:srcCompat="@drawable/ic_round_keyboard_arrow_left_64" />
 
                 <ImageButton
                     android:id="@+id/selectButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#333333"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/mp_button_background"
                     android:cropToPadding="false"
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="32dp"
                     android:scaleType="fitCenter"
-                    android:tag="SELECT"
+                    android:tag="ENTER"
                     app:srcCompat="@drawable/ic_logo_bulan_baru_white_small" />
 
                 <ImageButton
@@ -157,11 +150,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="RIGHT"
-                    app:srcCompat="@drawable/ic_chevron_right_white_18dp" />
+                    app:srcCompat="@drawable/ic_round_keyboard_arrow_right_64" />
 
             </TableRow>
 
@@ -176,12 +169,12 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:adjustViewBounds="false"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="VOLUME_DOWN"
-                    app:srcCompat="@drawable/ic_round_volume_down_24" />
+                    app:srcCompat="@drawable/ic_round_volume_down_64" />
 
                 <ImageButton
                     android:id="@+id/downButton"
@@ -189,11 +182,11 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:adjustViewBounds="false"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="DOWN"
-                    app:srcCompat="@drawable/ic_round_expand_more_24px" />
+                    app:srcCompat="@drawable/ic_round_keyboard_arrow_down_64" />
 
                 <ImageButton
                     android:id="@+id/volumeUpButton"
@@ -201,13 +194,13 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:adjustViewBounds="false"
-                    android:background="#333333"
+                    android:background="@drawable/mp_button_background"
                     android:cropToPadding="false"
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:tag="VOLUME_UP"
-                    app:srcCompat="@drawable/ic_round_volume_up_24" />
+                    app:srcCompat="@drawable/ic_round_volume_up_64" />
             </TableRow>
 
         </TableLayout>

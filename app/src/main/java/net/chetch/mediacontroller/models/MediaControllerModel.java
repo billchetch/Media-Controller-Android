@@ -23,6 +23,15 @@ public class MediaControllerModel extends MessagingViewModel {
         }
     };
 
+    public CommandResponseFilter onPlayerStatus = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME, MediaControllerMessageSchema.COMMAND_MEDIA_PLAYER_STATUS){
+        @Override
+        protected void onMatched(Message message) {
+            MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
+
+
+        }
+    };
+
     public CommandResponseFilter onPlayerKeyPressed = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME, MediaControllerMessageSchema.COMMAND_KEY_PRESS){
         @Override
         protected void onMatched(Message message) {
@@ -36,6 +45,7 @@ public class MediaControllerModel extends MessagingViewModel {
 
         try {
             //addMessageFilter(onServiceHelp);
+            addMessageFilter(onPlayerStatus);
             addMessageFilter(onPlayerKeyPressed);
 
         } catch (Exception e){

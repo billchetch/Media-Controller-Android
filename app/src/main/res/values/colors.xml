@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- media player -->
+    <color name="mp_button_pressed">#333333</color>
+    <color name="mp_button_focused">#000000</color>
+    <color name="mp_button_default">#000000</color>
 
+    <!-- sound manager -->
+    <color name="sm_button_pressed">#666666</color>
+    <color name="sm_button_focused">#333333</color>
+    <color name="sm_button_default">#333333</color>
 </resources>
