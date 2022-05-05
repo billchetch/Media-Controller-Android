@@ -54,10 +54,16 @@ public class MediaControllerModel extends MessagingViewModel {
     }
 
     public void sendServiceCommand(String commandName, Object ... args){
-        getClient().sendCommand(MediaControllerMessageSchema.SERVICE_NAME, commandName, args);
+        MessagingService ms = getMessaingService(MediaControllerMessageSchema.SERVICE_NAME);
+        if(ms != null && ms.isResponsive()) {
+            getClient().sendCommand(MediaControllerMessageSchema.SERVICE_NAME, commandName, args);
+        }
     }
 
     public void sendPlayerCommand(String commandName, Object ... args){
-        getClient().sendCommand(MediaControllerMessageSchema.PLAYER_NAME, commandName, args);
+        MessagingService ms = getMessaingService(MediaControllerMessageSchema.PLAYER_NAME);
+        if(ms != null && ms.isResponsive()) {
+            getClient().sendCommand(MediaControllerMessageSchema.PLAYER_NAME, commandName, args);
+        }
     }
 }
