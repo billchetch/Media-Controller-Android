@@ -46,7 +46,7 @@ public class MainActivity extends GenericActivity {
         if(obj instanceof ConnectManager){
             ConnectManager cm = (ConnectManager)obj;
 
-            String progressInfo = "Connecting...";
+            String progressInfo = null;
             switch(cm.getState()){
                 case CONNECT_REQUEST:
                     if(cm.fromError()){
@@ -54,15 +54,24 @@ public class MainActivity extends GenericActivity {
                         if(cm.getLastError() != null){
                             errMsg = errMsg + ": " + cm.getLastError().getMessage();
                         }
-                        progressInfo = errMsg + "... retrying";
+                        progressInfo = errMsg;
+                    } else {
+                        progressInfo = "Connecting...";
                     }
+                    showConnectionState(progressInfo, false);
+                    break;
 
-                    showConnectionState(progressInfo);
+                case CONNECTING:
+                    showConnectionState("Connecting...", true);
+                    break;
+
+                case RECONNECTNG:
+                    showConnectionState("Reconnecting...", true);
                     break;
 
                 case RECONNECT_REQUEST:
-                    progressInfo = "Disconnected!... Attempting to reconnect...";
-                    showConnectionState(progressInfo);
+                    progressInfo = "Disconnected!";
+                    showConnectionState(progressInfo, false);
                     break;
 
                 case CONNECTED:
@@ -77,23 +86,25 @@ public class MainActivity extends GenericActivity {
 
     SoundManagerDialogFragment soundManagerDialog;
 
-    protected void showConnectionState(String progressInfo){
+    protected void showConnectionState(String connectionInfo, boolean showProgressBar){
         ConstraintLayout mainLayout = findViewById(R.id.mainLayout);
         View progressCtn = findViewById(R.id.progressCtn);
+        View progressBar = findViewById(R.id.progressBar);
 
-        if(progressInfo == null){
+        if(connectionInfo == null){
             mainLayout.setVisibility(View.VISIBLE);
             progressCtn.setVisibility(View.INVISIBLE);
             setProgressInfo("Connected!");
         } else {
+            progressBar.setVisibility(showProgressBar ? View.VISIBLE : View.GONE);
             mainLayout.setVisibility(View.INVISIBLE);
             progressCtn.setVisibility(View.VISIBLE);
-            setProgressInfo(progressInfo);
+            setProgressInfo(connectionInfo);
         }
     }
 
     protected void hideConnectionState(){
-        showConnectionState(null);
+        showConnectionState(null, false);
     }
 
     @Override
@@ -125,7 +136,9 @@ public class MainActivity extends GenericActivity {
             });
             mediaModel.observeMessagingServices(this, ms ->{
                 if(!ms.isResponsive()){
-                    showConnectionState(ms.name + " is not responding. Please wait...");
+                    showConnectionState(ms.name + " is not responding. Please ensure all services are running on the mdeia server.", false);
+                } else {
+                    hideConnectionState();
                 }
             });
 
