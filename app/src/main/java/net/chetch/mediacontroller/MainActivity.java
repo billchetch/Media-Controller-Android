@@ -18,9 +18,11 @@ import net.chetch.appframework.GenericActivity;
 import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
 import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.messaging.ClientConnection;
+import net.chetch.messaging.MessagingViewModel;
+import net.chetch.messaging.exceptions.MessagingServiceException;
 import net.chetch.utilities.SLog;
 import net.chetch.webservices.ConnectManager;
-import net.chetch.webservices.WebserviceViewModel;
+import net.chetch.messaging.exceptions.*;
 
 
 public class MainActivity extends GenericActivity {
@@ -41,22 +43,10 @@ public class MainActivity extends GenericActivity {
     ConnectManager connectManager = new ConnectManager();
     MediaControllerModel mediaModel;
     Observer connectProgress  = obj -> {
-        if(obj instanceof WebserviceViewModel.LoadProgress) {
-            WebserviceViewModel.LoadProgress progress = (WebserviceViewModel.LoadProgress) obj;
-            try {
-                String state = progress.startedLoading ? "Loading" : "Loaded";
-                String progressInfo = state + (progress.info == null ? "" : " " + progress.info.toLowerCase());
-                if(SLog.LOG)SLog.i(LOG_TAG, "in load data progress ..." + progressInfo);
-
-            } catch (Exception e) {
-                if(SLog.LOG)SLog.e(LOG_TAG, "load progress: " + e.getMessage());
-            }
-        } else if(obj instanceof ClientConnection){
-
-        } else if(obj instanceof ConnectManager){
+        if(obj instanceof ConnectManager){
             ConnectManager cm = (ConnectManager)obj;
-            //ConstraintLayout mainLayout = findViewById(R.id.erMainLayout);
-            View progressCtn = findViewById(R.id.progressCtn);
+
+            String progressInfo = "Connecting...";
             switch(cm.getState()){
                 case CONNECT_REQUEST:
                     if(cm.fromError()){
@@ -64,30 +54,47 @@ public class MainActivity extends GenericActivity {
                         if(cm.getLastError() != null){
                             errMsg = errMsg + ": " + cm.getLastError().getMessage();
                         }
-                        setProgressInfo(errMsg + "... retrying");
-                    } else {
-                        setProgressInfo("Connecting...");
+                        progressInfo = errMsg + "... retrying";
                     }
-                    //mainLayout.setVisibility(View.INVISIBLE);
-                    progressCtn.setVisibility(View.VISIBLE);
+
+                    showConnectionState(progressInfo);
                     break;
 
                 case RECONNECT_REQUEST:
-                    setProgressInfo("Disconnected!... Attempting to reconnect...");
-                    //mainLayout.setVisibility(View.INVISIBLE);
-                    progressCtn.setVisibility(View.VISIBLE);
+                    progressInfo = "Disconnected!... Attempting to reconnect...";
+                    showConnectionState(progressInfo);
                     break;
 
                 case CONNECTED:
-                    //mainLayout.setVisibility(View.VISIBLE);
-                    progressCtn.setVisibility(View.INVISIBLE);
+                    hideConnectionState();
                     onClientConnected();
                     break;
             }
+        } else {
+            showError(0, "Unexpected instance: " + obj.getClass());
         }
     };
 
     SoundManagerDialogFragment soundManagerDialog;
+
+    protected void showConnectionState(String progressInfo){
+        ConstraintLayout mainLayout = findViewById(R.id.mainLayout);
+        View progressCtn = findViewById(R.id.progressCtn);
+
+        if(progressInfo == null){
+            mainLayout.setVisibility(View.VISIBLE);
+            progressCtn.setVisibility(View.INVISIBLE);
+            setProgressInfo("Connected!");
+        } else {
+            mainLayout.setVisibility(View.INVISIBLE);
+            progressCtn.setVisibility(View.VISIBLE);
+            setProgressInfo(progressInfo);
+        }
+    }
+
+    protected void hideConnectionState(){
+        showConnectionState(null);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +111,27 @@ public class MainActivity extends GenericActivity {
             mediaModel = new ViewModelProvider(this).get(MediaControllerModel.class);
             mediaModel.setClientName(MediaControllerModel.CLIENT_NAME);
             mediaModel.getError().observe(this, throwable  -> {
-                showError(throwable);
+                if(mediaModel.isReady() && !ConnectManager.isConnectionError(throwable)) {
+                    if(throwable instanceof MessagingServiceException){
+                        MessagingServiceException ex = (MessagingServiceException)throwable;
+                        MessagingViewModel.MessagingService ms = ex.messagingService;
+                        if(ms.isResponsive()){
+                            showError(ex);
+                        }
+                    } else {
+                        showError(throwable);
+                    }
+                }
+            });
+            mediaModel.observeMessagingServices(this, ms ->{
+                if(!ms.isResponsive()){
+                    showConnectionState(ms.name + " is not responding. Please wait...");
+                }
             });
 
+
             connectManager.addModel(mediaModel);
-            //connectManager.requestConnect(connectProgress);
+            connectManager.requestConnect(connectProgress);
         } catch (Exception e){
             showError(e);
             if(SLog.LOG)SLog.e(LOG_TAG, e.getMessage());
