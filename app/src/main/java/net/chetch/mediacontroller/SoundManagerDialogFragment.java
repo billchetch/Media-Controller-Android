@@ -8,12 +8,18 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 
 import net.chetch.appframework.GenericDialogFragment;
+import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
+import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.utilities.SLog;
+
+import androidx.annotation.NonNull;
 
 public class SoundManagerDialogFragment extends GenericDialogFragment implements View.OnClickListener{
 
     static final String LOG_TAG = "SMDF";
 
+    public MediaControllerModel mediaModel;
+    public int checkedID = 0;
     private String amplifierID = "";
 
     @Override
@@ -27,7 +33,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
+                close();
             }
         });
 
@@ -37,6 +43,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                checkedID = checkedId;
                 switch(checkedId){
                     case R.id.rbInside:
                         amplifierID = "lght1";
@@ -49,7 +56,11 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             }
         });
 
-        rg.check(R.id.rbInside);
+
+        if(checkedID == 0){
+            checkedID = R.id.rbInside;
+        }
+        rg.check(checkedID);
 
         //Buttons
         int[] resources = new int[]{R.id.volumeUp, R.id.volumeDown, R.id.muteUnmute, R.id.sourceMediaPlayer, R.id.sourceBluetooth, R.id.sourceAux};
@@ -64,13 +75,28 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         return dialog;
     }
 
+
+
     @Override
     public void onClick(View view) {
 
         Object cmd = view.getTag();
-        if(cmd != null) {
-            cmd = amplifierID + ":" + cmd;
+        if(cmd != null && amplifierID != null) {
+            cmd = "adm:" + amplifierID + ":" + cmd;
             if (SLog.LOG) SLog.i(LOG_TAG, cmd.toString());
+            sendServiceCommand(cmd.toString(), true);
         }
+    }
+
+    private void sendServiceCommand(String cmd, boolean vibrate){
+        boolean sent = mediaModel.sendServiceCommand(cmd);
+        if(sent && vibrate){
+            MainActivity.Vibrate(getActivity(), 150);
+        }
+    }
+
+    private void close(){
+        if(dialogManager != null)dialogManager.onDialogPositiveClick(this);
+        dismiss();
     }
 }

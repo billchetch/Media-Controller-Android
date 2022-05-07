@@ -10,11 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import net.chetch.appframework.GenericActivity;
+import net.chetch.appframework.GenericDialogFragment;
+import net.chetch.appframework.IDialogManager;
 import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
 import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.messaging.ClientConnection;
@@ -25,7 +28,7 @@ import net.chetch.webservices.ConnectManager;
 import net.chetch.messaging.exceptions.*;
 
 
-public class MainActivity extends GenericActivity {
+public class MainActivity extends GenericActivity implements IDialogManager {
 
     public static void Vibrate(Context ctx, int ms){
         Vibrator v = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
@@ -80,11 +83,13 @@ public class MainActivity extends GenericActivity {
                     break;
             }
         } else {
-            showError(0, "Unexpected instance: " + obj.getClass());
+            //Add more object specific handling here ... the ConnectManager models will also
+            //call this progress observer directly as will the client in the case of a messaging model
         }
     };
 
     SoundManagerDialogFragment soundManagerDialog;
+    int soundManagerCheckedID = 0;
 
     protected void showConnectionState(String connectionInfo, boolean showProgressBar){
         ConstraintLayout mainLayout = findViewById(R.id.mainLayout);
@@ -144,7 +149,9 @@ public class MainActivity extends GenericActivity {
 
 
             connectManager.addModel(mediaModel);
-            connectManager.requestConnect(connectProgress);
+            //connectManager.requestConnect(connectProgress);
+            hideConnectionState();
+
         } catch (Exception e){
             showError(e);
             if(SLog.LOG)SLog.e(LOG_TAG, e.getMessage());
@@ -180,15 +187,15 @@ public class MainActivity extends GenericActivity {
                 break;
 
             case "P":
-                keys2send = cmd;
+                keys2send = cmd.toLowerCase();
                 sendPlayerCommand(keys2send, true);
                 break;
         }
     }
 
     private void sendPlayerCommand(String cmd, boolean vibrate){
-        //mediaModel.sendPlayerCommand(MediaControllerMessageSchema.COMMAND_KEY_PRESS, cmd);
-        if(vibrate){
+        boolean sent = mediaModel.sendPlayerCommand(MediaControllerMessageSchema.COMMAND_KEY_PRESS, cmd);
+        if(sent && vibrate){
             Vibrate(this, 150);
         }
     }
@@ -198,7 +205,17 @@ public class MainActivity extends GenericActivity {
             soundManagerDialog.dismiss();
         }
         soundManagerDialog = new SoundManagerDialogFragment();
-
+        soundManagerDialog.mediaModel = mediaModel;
+        soundManagerDialog.checkedID = soundManagerCheckedID;
         soundManagerDialog.show(getSupportFragmentManager(), "SoundManagerDialog");
+    }
+
+    @Override
+    public void onDialogPositiveClick(GenericDialogFragment dialog) {
+        super.onDialogPositiveClick(dialog);
+
+        if(dialog instanceof SoundManagerDialogFragment){
+            soundManagerCheckedID = ((SoundManagerDialogFragment)dialog).checkedID;
+        }
     }
 }

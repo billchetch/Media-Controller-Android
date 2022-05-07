@@ -174,7 +174,7 @@
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
                     android:scaleType="center"
-                    android:tag="VOLUME_DOWN"
+                    android:tag="SUBTRACT"
                     app:srcCompat="@drawable/ic_round_volume_down_64" />
 
                 <ImageButton
@@ -200,7 +200,7 @@
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
                     android:scaleType="center"
-                    android:tag="VOLUME_UP"
+                    android:tag="ADD"
                     app:srcCompat="@drawable/ic_round_volume_up_64" />
             </TableRow>
 

@@ -23,6 +23,14 @@ public class MediaControllerModel extends MessagingViewModel {
         }
     };
 
+    public CommandResponseFilter onServiceStatus = new CommandResponseFilter(MediaControllerMessageSchema.SERVICE_NAME, MediaControllerMessageSchema.COMMAND_MEDIA_SERVICE_STATUS){
+        @Override
+        protected void onMatched(Message message) {
+            MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
+
+        }
+    };
+
     public CommandResponseFilter onPlayerStatus = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME, MediaControllerMessageSchema.COMMAND_MEDIA_PLAYER_STATUS){
         @Override
         protected void onMatched(Message message) {
@@ -44,7 +52,7 @@ public class MediaControllerModel extends MessagingViewModel {
         super();
 
         try {
-            //addMessageFilter(onServiceHelp);
+            addMessageFilter(onServiceStatus);
             addMessageFilter(onPlayerStatus);
             addMessageFilter(onPlayerKeyPressed);
 
@@ -53,17 +61,23 @@ public class MediaControllerModel extends MessagingViewModel {
         }
     }
 
-    public void sendServiceCommand(String commandName, Object ... args){
+    public boolean sendServiceCommand(String commandName, Object ... args){
         MessagingService ms = getMessaingService(MediaControllerMessageSchema.SERVICE_NAME);
         if(ms != null && ms.isResponsive()) {
             getClient().sendCommand(MediaControllerMessageSchema.SERVICE_NAME, commandName, args);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void sendPlayerCommand(String commandName, Object ... args){
+    public boolean sendPlayerCommand(String commandName, Object ... args){
         MessagingService ms = getMessaingService(MediaControllerMessageSchema.PLAYER_NAME);
         if(ms != null && ms.isResponsive()) {
             getClient().sendCommand(MediaControllerMessageSchema.PLAYER_NAME, commandName, args);
+            return true;
+        } else {
+            return false;
         }
     }
 }

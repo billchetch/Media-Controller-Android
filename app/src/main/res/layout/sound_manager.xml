@@ -38,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:scaleType="center"
             android:tag="Volume_Down"
             app:srcCompat="@drawable/ic_round_volume_down_64" />
 
@@ -54,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:tag="Mute"
+            android:tag="Mute/Unmute"
             app:srcCompat="@drawable/ic_round_volume_off_64" />
 
     </LinearLayout>
@@ -76,6 +77,7 @@
             android:layout_margin="16dp"
             android:drawableLeft="@drawable/ic_round_computer_24"
             android:includeFontPadding="false"
+            android:tag="AuxOpt"
             android:text="Select Media Player"
             android:textSize="18sp" />
 
@@ -85,6 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:drawableStart="@drawable/ic_round_bluetooth_audio_24"
+            android:tag="Bluetooth"
             android:text="Select Bluetooth"
             android:textAlignment="center"
             android:textSize="18sp" />
@@ -95,6 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:drawableLeft="@drawable/ic_round_adjust_24"
+            android:tag="Aux"
             android:text="Select AUX"
             android:textSize="18sp" />
     </LinearLayout>
