@@ -149,8 +149,8 @@ public class MainActivity extends GenericActivity implements IDialogManager {
 
 
             connectManager.addModel(mediaModel);
-            //connectManager.requestConnect(connectProgress);
-            hideConnectionState();
+            connectManager.requestConnect(connectProgress); //comment this if you want to load without a server
+            //hideConnectionState(); //uncomment this if you want to load without a server
 
         } catch (Exception e){
             showError(e);

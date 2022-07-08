@@ -82,6 +82,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
 
         Object cmd = view.getTag();
         if(cmd != null && amplifierID != null) {
+
             cmd = "adm:" + amplifierID + ":" + cmd;
             if (SLog.LOG) SLog.i(LOG_TAG, cmd.toString());
             sendServiceCommand(cmd.toString(), true);
