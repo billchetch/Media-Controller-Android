@@ -183,12 +183,12 @@ public class MainActivity extends GenericActivity implements IDialogManager {
             case "ADD":
             case "SUBTRACT":
                 keys2send = "{" + cmd + "}";
-                sendPlayerCommand(keys2send, true);
+                sendPlayerCommand(keys2send, MediaControllerModel.VIBRATE);
                 break;
 
             case "P":
                 keys2send = cmd.toLowerCase();
-                sendPlayerCommand(keys2send, true);
+                sendPlayerCommand(keys2send, MediaControllerModel.VIBRATE);
                 break;
         }
     }

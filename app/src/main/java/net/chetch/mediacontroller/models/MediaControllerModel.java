@@ -8,39 +8,28 @@ import net.chetch.messaging.filters.CommandResponseFilter;
 import net.chetch.utilities.SLog;
 import net.chetch.webservices.DataStore;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 public class MediaControllerModel extends MessagingViewModel {
 
     static public final String CLIENT_NAME = "ACMMediaController";
     static private final String LOG_TAG = "MCM";
+    static public boolean VIBRATE = true;
 
-    public CommandResponseFilter onServiceHelp = new CommandResponseFilter(MediaControllerMessageSchema.SERVICE_NAME, MediaControllerMessageSchema.COMMAND_HELP){
+    MutableLiveData<MediaControllerMessageSchema> liveDataLastServiceCommandResponse = new MutableLiveData<>();
+
+    public CommandResponseFilter onServiceHCommandResponse = new CommandResponseFilter(MediaControllerMessageSchema.SERVICE_NAME){
         @Override
         protected void onMatched(Message message) {
             MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
+            liveDataLastServiceCommandResponse.postValue(schema);
 
         }
     };
 
-    public CommandResponseFilter onServiceStatus = new CommandResponseFilter(MediaControllerMessageSchema.SERVICE_NAME, MediaControllerMessageSchema.COMMAND_MEDIA_SERVICE_STATUS){
-        @Override
-        protected void onMatched(Message message) {
-            MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
-
-        }
-    };
-
-    public CommandResponseFilter onPlayerStatus = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME, MediaControllerMessageSchema.COMMAND_MEDIA_PLAYER_STATUS){
-        @Override
-        protected void onMatched(Message message) {
-            MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
-
-
-        }
-    };
-
-    public CommandResponseFilter onPlayerKeyPressed = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME, MediaControllerMessageSchema.COMMAND_KEY_PRESS){
+    public CommandResponseFilter onPlayerCommandResponse = new CommandResponseFilter(MediaControllerMessageSchema.PLAYER_NAME){
         @Override
         protected void onMatched(Message message) {
             MediaControllerMessageSchema schema = new MediaControllerMessageSchema(message);
@@ -51,10 +40,11 @@ public class MediaControllerModel extends MessagingViewModel {
     public MediaControllerModel(){
         super();
 
+        permissableServerTimeDifference = 60 * 15;
+
         try {
-            addMessageFilter(onServiceStatus);
-            addMessageFilter(onPlayerStatus);
-            addMessageFilter(onPlayerKeyPressed);
+            addMessageFilter(onServiceHCommandResponse);
+            addMessageFilter(onPlayerCommandResponse);
 
         } catch (Exception e){
             if(SLog.LOG)SLog.e(LOG_TAG, e.getMessage());
@@ -69,6 +59,10 @@ public class MediaControllerModel extends MessagingViewModel {
         } else {
             return false;
         }
+    }
+
+    public LiveData<MediaControllerMessageSchema> getLastServiceCommandResponse(){
+        return liveDataLastServiceCommandResponse;
     }
 
     public boolean sendPlayerCommand(String commandName, Object ... args){

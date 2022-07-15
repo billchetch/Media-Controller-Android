@@ -7,4 +7,9 @@
         android:singleLine="false"
         android:summary="Set the Network API base URL here"
         android:title="Network API Base URL" />
+    <CheckBoxPreference
+        android:key="vibrate"
+        android:title="Vibrate on button press"
+        android:summary="Vibrate on button press"
+        android:defaultValue="true"/>
 </PreferenceScreen>

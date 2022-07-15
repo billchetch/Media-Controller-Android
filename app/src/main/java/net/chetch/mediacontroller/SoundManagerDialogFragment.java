@@ -2,10 +2,12 @@ package net.chetch.mediacontroller;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import net.chetch.appframework.GenericDialogFragment;
 import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
@@ -21,6 +23,13 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
     public MediaControllerModel mediaModel;
     public int checkedID = 0;
     private String amplifierID = "";
+    private SoundManagerWaitingDialogFragment waitingDialog;
+    private String selectedSource;
+    Handler waitHandler = new Handler();
+    Runnable waitRunnable = ()->{
+        closeWaiting();
+    };
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -69,6 +78,11 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             v.setOnClickListener(this);
         }
 
+        mediaModel.getLastServiceCommandResponse().observe(getActivity(), ld->{
+            if(SLog.LOG)SLog.i(LOG_TAG, "Last service command response received");
+            //in case required....
+        });
+
 
         if(SLog.LOG)SLog.i(LOG_TAG, "Sound Manager Dialog created");
 
@@ -85,15 +99,48 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
 
             cmd = "adm:" + amplifierID + ":" + cmd;
             if (SLog.LOG) SLog.i(LOG_TAG, cmd.toString());
-            sendServiceCommand(cmd.toString(), true);
+            boolean source = false;
+            switch(view.getTag().toString()){
+                case "Optical":
+                    selectedSource = "Media Player";
+                    source = true;
+                    break;
+                case "Bluetooth":
+                case "Aux":
+                    selectedSource = view.getTag().toString();
+                    source = true;
+                    break;
+
+                default:
+                    source = false;
+                    break;
+            }
+            if(source) {
+                openWaiting("Selecting " + selectedSource + "... Please wait", 3000);
+            }
+            sendServiceCommand(cmd.toString(), MediaControllerModel.VIBRATE);
         }
     }
 
     private void sendServiceCommand(String cmd, boolean vibrate){
         boolean sent = mediaModel.sendServiceCommand(cmd);
-        if(sent && vibrate){
-            MainActivity.Vibrate(getActivity(), 150);
+        if(sent) {
+            if (vibrate) {
+                MainActivity.Vibrate(getActivity(), 150);
+            }
         }
+    }
+
+    private void openWaiting(String message, int millis){
+        waitingDialog = new SoundManagerWaitingDialogFragment();
+        waitingDialog.waitingMessage = message;
+        waitingDialog.show(getChildFragmentManager(), "WaitingDialog");
+        waitHandler.postDelayed(waitRunnable, millis);
+    }
+
+    private void closeWaiting(){
+        if(waitingDialog != null)waitingDialog.dismiss();
+        waitingDialog = null;
     }
 
     private void close(){
