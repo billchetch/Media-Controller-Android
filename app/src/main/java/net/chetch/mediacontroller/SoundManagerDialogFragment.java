@@ -4,8 +4,11 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -15,10 +18,14 @@ import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.utilities.SLog;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-public class SoundManagerDialogFragment extends GenericDialogFragment implements View.OnClickListener{
+public class SoundManagerDialogFragment extends GenericDialogFragment implements View.OnClickListener, MenuItem.OnMenuItemClickListener {
 
     static final String LOG_TAG = "SMDF";
+    static final int MENU_ITEM_TOGGLE_POWER_INSIDE = 100;
+    static final int MENU_ITEM_TOGGLE_POWER_OUTSIDE = 101;
+    static final int MENU_ITEM_TOGGLE_POWER_BOTH = 102;
 
     public MediaControllerModel mediaModel;
     public int checkedID = 0;
@@ -65,6 +72,8 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             }
         });
 
+        ImageView iv = contentView.findViewById(R.id.powerOptions);
+        registerForContextMenu(iv);
 
         if(checkedID == 0){
             checkedID = R.id.rbInside;
@@ -88,7 +97,6 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
 
         return dialog;
     }
-
 
 
     @Override
@@ -120,6 +128,40 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             }
             sendServiceCommand(cmd.toString(), MediaControllerModel.VIBRATE);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        menu.add(0, MENU_ITEM_TOGGLE_POWER_INSIDE, 0, "Toggle Amplifier Inside").setOnMenuItemClickListener(this);
+        menu.add(0, MENU_ITEM_TOGGLE_POWER_OUTSIDE, 0, "Toggle Amplifier Outside").setOnMenuItemClickListener(this);
+        menu.add(0, MENU_ITEM_TOGGLE_POWER_BOTH, 0, "Toggle Amplifiers").setOnMenuItemClickListener(this);
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        String cmd;
+        switch(menuItem.getItemId()) {
+            case MENU_ITEM_TOGGLE_POWER_INSIDE:
+            case MENU_ITEM_TOGGLE_POWER_OUTSIDE:
+                cmd = "adm:" + amplifierID + ":On/Off";
+                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                break;
+
+            case MENU_ITEM_TOGGLE_POWER_BOTH:
+                cmd = "adm:lght1:On/Off";
+                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                cmd = "adm:lght2:On/Off";
+                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                break;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     private void sendServiceCommand(String cmd, boolean vibrate){
