@@ -160,7 +160,6 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             default:
                 break;
         }
-
         return false;
     }
 
