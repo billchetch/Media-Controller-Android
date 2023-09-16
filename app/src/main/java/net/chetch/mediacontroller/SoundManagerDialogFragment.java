@@ -60,14 +60,10 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 checkedID = checkedId;
-                switch(checkedId){
-                    case R.id.rbInside:
-                        amplifierID = "lght1";
-                        break;
-                    case R.id.rbOutside:
-                        amplifierID = "lght2";
-                        break;
-
+                if (checkedId == R.id.rbInside) {
+                    amplifierID = "lght1";
+                } else if (checkedId == R.id.rbOutside) {
+                    amplifierID = "lght2";
                 }
             }
         });
@@ -145,8 +141,12 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         String cmd;
         switch(menuItem.getItemId()) {
             case MENU_ITEM_TOGGLE_POWER_INSIDE:
+                cmd = "adm:lght1:On/Off";
+                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                break;
+
             case MENU_ITEM_TOGGLE_POWER_OUTSIDE:
-                cmd = "adm:" + amplifierID + ":On/Off";
+                cmd = "adm:lght2:On/Off";
                 sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
                 break;
 

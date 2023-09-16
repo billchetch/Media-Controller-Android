@@ -14,7 +14,6 @@ public class MCApplication extends ChetchApplication {
     public void onCreate() {
         super.onCreate();
 
-
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         try{
