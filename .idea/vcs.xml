@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/../AppFramework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../AppResources" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../BluetoothLibrary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ChetchXMPP" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../MessagingLibrary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Utils" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../WebserviceLibrary" vcs="Git" />
   </component>
 </project>

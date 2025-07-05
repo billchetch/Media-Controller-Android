@@ -3,17 +3,14 @@ package net.chetch.mediacontroller;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import net.chetch.appframework.GenericDialogFragment;
-import net.chetch.mediacontroller.models.MediaControllerMessageSchema;
 import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.utilities.SLog;
 
@@ -27,7 +24,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
     static final int MENU_ITEM_TOGGLE_POWER_OUTSIDE = 101;
     static final int MENU_ITEM_TOGGLE_POWER_BOTH = 102;
 
-    public MediaControllerModel mediaModel;
+    public MediaControllerModel model;
     public int checkedID = 0;
     private String amplifierID = "";
     private SoundManagerWaitingDialogFragment waitingDialog;
@@ -83,12 +80,6 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             v.setOnClickListener(this);
         }
 
-        mediaModel.getLastServiceCommandResponse().observe(getActivity(), ld->{
-            if(SLog.LOG)SLog.i(LOG_TAG, "Last service command response received");
-            //in case required....
-        });
-
-
         if(SLog.LOG)SLog.i(LOG_TAG, "Sound Manager Dialog created");
 
         return dialog;
@@ -122,7 +113,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             if(source) {
                 openWaiting("Selecting " + selectedSource + "... Please wait", 3000);
             }
-            sendServiceCommand(cmd.toString(), MediaControllerModel.VIBRATE);
+            sendIRAlias(cmd.toString(), MediaControllerModel.VIBRATE);
         }
     }
 
@@ -142,19 +133,18 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         switch(menuItem.getItemId()) {
             case MENU_ITEM_TOGGLE_POWER_INSIDE:
                 cmd = "adm:lght1:On/Off";
-                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
                 break;
 
             case MENU_ITEM_TOGGLE_POWER_OUTSIDE:
                 cmd = "adm:lght2:On/Off";
-                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
                 break;
 
             case MENU_ITEM_TOGGLE_POWER_BOTH:
-                cmd = "adm:lght1:On/Off";
-                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
-                cmd = "adm:lght2:On/Off";
-                sendServiceCommand(cmd, MediaControllerModel.VIBRATE);
+                cmd = "On/Off";
+                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
+                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
                 break;
 
             default:
@@ -163,13 +153,13 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         return false;
     }
 
-    private void sendServiceCommand(String cmd, boolean vibrate){
-        boolean sent = mediaModel.sendServiceCommand(cmd);
+    private void sendIRAlias(String cmd, boolean vibrate){
+        /*boolean sent = mediaModel.sendServiceCommand(cmd);
         if(sent) {
             if (vibrate) {
                 MainActivity.Vibrate(getActivity(), 150);
             }
-        }
+        }*/
     }
 
     private void openWaiting(String message, int millis){

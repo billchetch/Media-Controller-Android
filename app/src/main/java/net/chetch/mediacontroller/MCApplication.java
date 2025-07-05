@@ -17,13 +17,13 @@ public class MCApplication extends ChetchApplication {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         try{
-            String apiBaseURL = sharedPref.getString("api_base_url", null);
+            //String apiBaseURL = sharedPref.getString("api_base_url", null);
             //String apiBaseURL = "http://192.168.3.188:8001/api";
             //String apiBaseURL = "http://192.168.1.103:8001/api";
-            if(SLog.LOG)SLog.i("Application", " set api base url to " + apiBaseURL);
-            NetworkRepository.getInstance().setAPIBaseURL(apiBaseURL);
+            //if(SLog.LOG)SLog.i("Application", " set api base url to " + apiBaseURL);
+            //NetworkRepository.getInstance().setAPIBaseURL(apiBaseURL);
 
-
+            MediaControllerModel.REMOTE_BLUETOOTH_DEVICE = sharedPref.getString("remote_device", null);
             MediaControllerModel.VIBRATE = sharedPref.getBoolean("vibrate", true);
         } catch (Exception e){
             Log.e("ERApplication", e.getMessage());

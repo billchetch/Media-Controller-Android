@@ -1,13 +1,38 @@
-include ':utilities'
-project(':utilities').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/Utils/utilities')
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 include ':appresources'
-project(':appresources').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/AppResourcesLib/appresources')
+project(':appresources').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/AppResources/appresources')
 include ':appframework'
-project(':appframework').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/AppFrameworkLib/appframework')
+project(':appframework').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/AppFramework/appframework')
 include ':webservices'
-project(':webservices').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/WebservicesTest/webservices')
+project(':webservices').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/WebserviceLibrary/webservices')
 include ':messaging'
-project(':messaging').projectDir=new File('/Users/billthorgerson/Documents/AndroidStudioProjects/ChetchMessagingTest/messaging')
+project(':messaging').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/MessagingLibrary/messaging')
+include ':utilities'
+project(':utilities').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/Utils/utilities')
+include ':xmpp'
+project(':xmpp').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/ChetchXMPP/xmpp')
+include ':bluetooth'
+project(':bluetooth').projectDir=new File('/Users/billthorgerson/AndroidStudioProjects/BluetoothLibrary/bluetooth')
 
 include ':app'
 rootProject.name = "Media Controller"

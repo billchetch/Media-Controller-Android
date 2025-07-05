@@ -4,21 +4,23 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="jbr-17" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../AppFrameworkLib/appframework" />
-            <option value="$PROJECT_DIR$/../AppResourcesLib/appresources" />
-            <option value="$PROJECT_DIR$/../ChetchMessagingTest/messaging" />
+            <option value="$PROJECT_DIR$/../AppFramework/appframework" />
+            <option value="$PROJECT_DIR$/../AppResources/appresources" />
+            <option value="$PROJECT_DIR$/../BluetoothLibrary/bluetooth" />
+            <option value="$PROJECT_DIR$/../ChetchXMPP/xmpp" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/../MessagingLibrary/messaging" />
             <option value="$PROJECT_DIR$/../Utils/utilities" />
-            <option value="$PROJECT_DIR$/../WebservicesTest/webservices" />
+            <option value="$PROJECT_DIR$/../WebserviceLibrary/webservices" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

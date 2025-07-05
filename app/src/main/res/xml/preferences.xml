@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:defaultValue="http://192.168.3.188:8001/api/"
+        android:defaultValue=""
+        android:key="remote_device"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Enter Remote Device Name or MAC address" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="vibrate"
+        android:summary="Vibrate on button press"
+        android:title="Vibrate on button press" />
+    <EditTextPreference
+        android:defaultValue="http://192.168.2.88:8001/api/"
         android:key="api_base_url"
         android:selectAllOnFocus="true"
-        android:singleLine="false"
+        android:singleLine="true"
         android:summary="Set the Network API base URL here"
         android:title="Network API Base URL" />
-    <CheckBoxPreference
-        android:key="vibrate"
-        android:title="Vibrate on button press"
-        android:summary="Vibrate on button press"
-        android:defaultValue="true"/>
 </PreferenceScreen>

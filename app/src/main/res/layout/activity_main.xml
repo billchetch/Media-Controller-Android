@@ -112,7 +112,7 @@
                     android:background="@drawable/mp_button_background"
                     android:onClick="onClickMediaPlayerButton"
                     android:scaleType="center"
-                    android:tag="P"
+                    android:tag="PLAY"
                     app:srcCompat="@drawable/ic_round_play_arrow_64" />
             </TableRow>
 
@@ -174,7 +174,7 @@
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
                     android:scaleType="center"
-                    android:tag="SUBTRACT"
+                    android:tag="VOLUME_DOWN"
                     app:srcCompat="@drawable/ic_round_volume_down_64" />
 
                 <ImageButton
@@ -200,7 +200,7 @@
                     android:onClick="onClickMediaPlayerButton"
                     android:padding="12dp"
                     android:scaleType="center"
-                    android:tag="ADD"
+                    android:tag="VOLUME_UP"
                     app:srcCompat="@drawable/ic_round_volume_up_64" />
             </TableRow>
 
