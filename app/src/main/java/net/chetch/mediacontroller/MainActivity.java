@@ -42,10 +42,8 @@ public class MainActivity extends GenericActivity implements IDialogManager {
     final static String LOG_TAG = "Main";
 
     MediaControllerModel model;
-
     SoundManagerDialogFragment soundManagerDialog;
     int soundManagerCheckedID = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
