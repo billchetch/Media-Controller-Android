@@ -17,6 +17,7 @@ public class SettingsActivity extends SettingsActivityBase{
             MediaControllerModel.VIBRATE = sharedPreferences.getBoolean(key, true);
         } else if(key.equals("remote_device")){
             MediaControllerModel.REMOTE_BLUETOOTH_DEVICE = sharedPreferences.getString(key, null);
+            restartMainActivityOnFinish = true;
         }
     }
 }

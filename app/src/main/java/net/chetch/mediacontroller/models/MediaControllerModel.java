@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import net.chetch.bluetooth.BluetoothViewModel;
+import net.chetch.bluetooth.exceptions.BluetoothException;
 import net.chetch.messaging.Message;
 import net.chetch.messaging.MessageType;
 import net.chetch.messaging.MessagingViewModel;
@@ -20,9 +21,11 @@ public class MediaControllerModel extends BluetoothViewModel {
     static private final String LOG_TAG = "MCM";
     static public boolean VIBRATE = true;
 
+    static public final String SENDER = "Bluetooth";
+
     static public String REMOTE_BLUETOOTH_DEVICE = "";
 
-    public void init(Context context) {
+    public void init(Context context) throws BluetoothException {
         super.init(context, REMOTE_BLUETOOTH_DEVICE);
     }
 
@@ -31,6 +34,7 @@ public class MediaControllerModel extends BluetoothViewModel {
             Message message = new Message();
             message.Type = MessageType.COMMAND;
             message.Target = "MediaPlayer";
+            message.Sender = SENDER;
             message.addValue("Shortcut", shortcut);
             this.send(message);
             return true;
@@ -44,6 +48,7 @@ public class MediaControllerModel extends BluetoothViewModel {
         try {
             Message message = new Message();
             message.Type = MessageType.COMMAND;
+            message.Sender = SENDER;
             message.Target = target;
             message.addValue("Alias", alias);
             this.send(message);

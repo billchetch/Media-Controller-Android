@@ -20,6 +20,9 @@ import androidx.annotation.Nullable;
 public class SoundManagerDialogFragment extends GenericDialogFragment implements View.OnClickListener, MenuItem.OnMenuItemClickListener {
 
     static final String LOG_TAG = "SMDF";
+
+    static final String LG_INSIDE = "lgin";
+    static final String LG_OUTSIDE = "lgout";
     static final int MENU_ITEM_TOGGLE_POWER_INSIDE = 100;
     static final int MENU_ITEM_TOGGLE_POWER_OUTSIDE = 101;
     static final int MENU_ITEM_TOGGLE_POWER_BOTH = 102;
@@ -58,9 +61,9 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 checkedID = checkedId;
                 if (checkedId == R.id.rbInside) {
-                    amplifierID = "lght1";
+                    amplifierID = LG_INSIDE;
                 } else if (checkedId == R.id.rbOutside) {
-                    amplifierID = "lght2";
+                    amplifierID = LG_OUTSIDE;
                 }
             }
         });
@@ -89,11 +92,8 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
     @Override
     public void onClick(View view) {
 
-        Object cmd = view.getTag();
-        if(cmd != null && amplifierID != null) {
-
-            cmd = "adm:" + amplifierID + ":" + cmd;
-            if (SLog.LOG) SLog.i(LOG_TAG, cmd.toString());
+        Object alias = view.getTag();
+        if(alias != null && amplifierID != null) {
             boolean source = false;
             switch(view.getTag().toString()){
                 case "Optical":
@@ -113,7 +113,7 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
             if(source) {
                 openWaiting("Selecting " + selectedSource + "... Please wait", 3000);
             }
-            sendIRAlias(cmd.toString(), MediaControllerModel.VIBRATE);
+            sendIRAlias(amplifierID, alias.toString(), MediaControllerModel.VIBRATE);
         }
     }
 
@@ -129,22 +129,22 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
-        String cmd;
+        String alias;
         switch(menuItem.getItemId()) {
             case MENU_ITEM_TOGGLE_POWER_INSIDE:
-                cmd = "adm:lght1:On/Off";
-                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
+                alias = "On/Off";
+                sendIRAlias("lght1", alias, MediaControllerModel.VIBRATE);
                 break;
 
             case MENU_ITEM_TOGGLE_POWER_OUTSIDE:
-                cmd = "adm:lght2:On/Off";
-                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
+                alias = "On/Off";
+                sendIRAlias("lght2", alias, MediaControllerModel.VIBRATE);
                 break;
 
             case MENU_ITEM_TOGGLE_POWER_BOTH:
-                cmd = "On/Off";
-                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
-                sendIRAlias(cmd, MediaControllerModel.VIBRATE);
+                alias = "On/Off";
+                sendIRAlias("lght1", alias, MediaControllerModel.VIBRATE);
+                sendIRAlias("lght2", alias, MediaControllerModel.VIBRATE);
                 break;
 
             default:
@@ -153,13 +153,13 @@ public class SoundManagerDialogFragment extends GenericDialogFragment implements
         return false;
     }
 
-    private void sendIRAlias(String cmd, boolean vibrate){
-        /*boolean sent = mediaModel.sendServiceCommand(cmd);
+    private void sendIRAlias(String target, String alias, boolean vibrate){
+        boolean sent = model.sendIRAlias(target, alias);
         if(sent) {
             if (vibrate) {
                 MainActivity.Vibrate(getActivity(), 150);
             }
-        }*/
+        }
     }
 
     private void openWaiting(String message, int millis){

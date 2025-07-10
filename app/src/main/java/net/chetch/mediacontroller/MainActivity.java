@@ -1,6 +1,7 @@
 package net.chetch.mediacontroller;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -12,9 +13,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import net.chetch.appframework.GenericActivity;
+import net.chetch.appframework.GenericDialogFragment;
 import net.chetch.appframework.IDialogManager;
 import net.chetch.appframework.NotificationBar;
 import net.chetch.bluetooth.BluetoothViewModel;
+import net.chetch.bluetooth.exceptions.BluetoothConfigurationException;
+import net.chetch.bluetooth.exceptions.BluetoothConnectionException;
+import net.chetch.bluetooth.exceptions.BluetoothException;
 import net.chetch.mediacontroller.models.MediaControllerModel;
 import net.chetch.utilities.Logger;
 import net.chetch.utilities.SLog;
@@ -54,19 +59,62 @@ public class MainActivity extends GenericActivity implements IDialogManager {
         //connect
         try{
             model = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(MediaControllerModel.class);
-            model.getError().observe(this, this::showError);
+            model.getError().observe(this, t -> {
+                if(t instanceof BluetoothConfigurationException){
+                    switch(((BluetoothConfigurationException)t).getCode()){
+                        case BluetoothConfigurationException.NO_DEVICE_OR_MAC_ADDRESS:
+                            showError("No device name or mac address found. Please add one in settings.").setOnDismissListener(dialogInterface -> {
+                                //Open settings
+                                openSettings();
+                            });
+                            break;
 
-            model.getConnecdted().observe(this, connected -> {
-                View mainLayout = findViewById(R.id.mainLayout);
-                if(connected){
-                    hideProgress();
-                    mainLayout.setVisibility(View.VISIBLE);
-                } else {
-                    mainLayout.setVisibility(View.INVISIBLE);
-                    showProgress();
+                        case BluetoothConfigurationException.DEVICE_NOT_PAIRED:
+                            showError("Device not paired. Please check remote device name is correct in settings and ensure this is paired with the remote device.").setOnDismissListener(dialogInterface -> {
+                                openSettings();
+                            });
+                            break;
+
+                        case BluetoothConfigurationException.USER_REFUSED_TO_ENABLE_ADAPTER:
+                            showError("This application cannot work without enabling bluetooth. Please enable in order to use this app.").setOnDismissListener(dialogInterface -> {
+                                System.exit(0);
+                            });
+                            break;
+                    }
+                } else if(t instanceof BluetoothConnectionException){
+                    String errMsg = null;
+                    switch(((BluetoothConnectionException)t).getCode()){
+                        case BluetoothConnectionException.SOCKET_CONNECT_FAILURE:
+                        case BluetoothConnectionException.REMOTE_ADAPTER_TURNED_OFF:
+                            errMsg = "Failed to connect to remote device.  Please ensure it is on and can accept a bluetooth connection";
+                            break;
+                        case BluetoothConnectionException.LOCAL_ADAPTER_TURNED_OFF:
+                            errMsg = "Failed to connect.  Please ensure your bluetooth is enabled";
+                            break;
+                    }
+                    if(errMsg != null){
+                        showError(errMsg, false).throwable = t;
+                    }
                 }
             });
-
+            model.getConnectStatus().observe(this, status -> {
+                View mainLayout = findViewById(R.id.mainLayout);
+                switch(status){
+                    case CONNECTING:
+                        showProgress("Connecting please wait...");
+                        mainLayout.setVisibility(View.INVISIBLE);
+                        break;
+                    case CONNECTED:
+                        dismissError();
+                        hideProgress();
+                        mainLayout.setVisibility(View.VISIBLE);
+                        break;
+                    case DISCONNECTED:
+                        hideProgress();
+                        mainLayout.setVisibility(View.INVISIBLE);
+                        break;
+                }
+            });
             model.getReceived().observe(this, msg ->{
                 //TODO
             });
@@ -74,7 +122,12 @@ public class MainActivity extends GenericActivity implements IDialogManager {
             if(!model.isConnected()) {
                 model.init(this);
                 model.connect();
-                showProgress();
+            }
+        }  catch (BluetoothException e){
+            if(e.getCode() == BluetoothException.NO_ADAPTER_AVAILABLE){
+                showError("This application cannot be used as this device does not have bluetooth!").setOnDismissListener(dialogInterface -> {
+                    System.exit(0);
+                });
             }
         } catch (Exception e){
             this.showError(e.getMessage());
